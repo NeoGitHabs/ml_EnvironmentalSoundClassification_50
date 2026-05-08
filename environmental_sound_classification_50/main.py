@@ -1,12 +1,13 @@
 import io
-from fastapi import FastAPI, HTTPException, UploadFile, File
 import torch
-import torch.nn as nn
-from torchaudio import transforms
 import uvicorn
-import torch.nn.functional as F
+import torch.nn as nn
 import soundfile as sf
 import streamlit as st
+import torch.nn.functional as F
+from torchaudio import transforms
+from fastapi import FastAPI, HTTPException, UploadFile, File
+
 
 
 class SimpleCNN(nn.Module):
@@ -42,18 +43,18 @@ transform = transforms.MelSpectrogram(
 
 max_len = 500
 
-classes = ['airplane', 'breathing', 'brushing_teeth', 'can_opening', 'car_horn', 'cat', 'chainsaw', 'chirping_birds',
-            'church_bells', 'clapping', 'clock_alarm', 'clock_tick', 'coughing', 'cow', 'crackling_fire', 'crickets', 'crow',
-            'crying_baby', 'dog', 'door_wood_creaks', 'door_wood_knock', 'drinking_sipping', 'engine', 'fireworks', 'footsteps',
-            'frog', 'glass_breaking', 'hand_saw', 'helicopter', 'hen', 'insects', 'keyboard_typing', 'laughing', 'mouse_click',
-            'pig', 'pouring_water', 'rain', 'rooster', 'sea_waves', 'sheep', 'siren', 'sneezing', 'snoring', 'thunderstorm',
-            'toilet_flush', 'train', 'vacuum_cleaner', 'washing_machine', 'water_drops', 'wind']
+# classes = ['airplane', 'breathing', 'brushing_teeth', 'can_opening', 'car_horn', 'cat', 'chainsaw', 'chirping_birds',
+#             'church_bells', 'clapping', 'clock_alarm', 'clock_tick', 'coughing', 'cow', 'crackling_fire', 'crickets', 'crow',
+#             'crying_baby', 'dog', 'door_wood_creaks', 'door_wood_knock', 'drinking_sipping', 'engine', 'fireworks', 'footsteps',
+#             'frog', 'glass_breaking', 'hand_saw', 'helicopter', 'hen', 'insects', 'keyboard_typing', 'laughing', 'mouse_click',
+#             'pig', 'pouring_water', 'rain', 'rooster', 'sea_waves', 'sheep', 'siren', 'sneezing', 'snoring', 'thunderstorm',
+#             'toilet_flush', 'train', 'vacuum_cleaner', 'washing_machine', 'water_drops', 'wind']
 
 audio_app = FastAPI(title='Environment sounds')
 model = SimpleCNN()
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-# classes = torch.load('labels.pth')
-model.load_state_dict(torch.load('env_model.pth', map_location=device))
+classes = torch.load('labels_environmental_sound_classification_50.pth', weights_only=False)
+model.load_state_dict(torch.load('model_environmental_sound_classification_50.pth', map_location=device))
 model.to(device)
 model.eval()
 
